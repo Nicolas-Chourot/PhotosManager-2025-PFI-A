@@ -9,51 +9,32 @@ namespace PhotosManager.Models
 {
     public class CommentsRepository : Repository<Comment>
     {
-        public override int Add(Comment comment)
-        {
-            Comment parent = DB.Comments.Get(comment.ParentId);
-            if (parent != null)
-            {
-                string text = parent.Text;
-                if (text.Length > 32)
-                    text = text.Substring(0, 32) + "...";
-
-            }
-
-            return base.Add(comment);
-        }
         public override bool Delete(int Id)
         {
             Comment comment = DB.Comments.Get(Id);
-            if (comment == null) return false;
-
-            List<Comment> responses = ToList().Where(c => c.ParentId == Id).ToList();
-            foreach (Comment c in responses)
+            if (comment != null)
             {
-                Delete(c.Id);
+                List<Comment> responses = ToList().Where(c => c.ParentId == Id).ToList();
+                responses.ForEach(r => Delete(r.Id));
+                comment.Likes.ForEach(l => DB.Likes.Delete(l.Id));
+                return base.Delete(Id);
             }
-            foreach (Like like in comment.Likes.ToList())
-            {
-                DB.Likes.Delete(like.Id);
-            }
-            return base.Delete(Id);
+            return false;
         }
 
         public void DeleteByPhotoId(int Id)
         {
-            List<Comment> responses = ToList().Where(c => c.PhotoId == Id).ToList();
-            foreach (Comment c in responses)
-            {
-                Delete(c.Id);
-            }
+            // select all comments related to photo of Id
+            List<Comment> comments = ToList().Where(c => c.PhotoId == Id).ToList();
+            // Do not need to call recursive Delete, all photo Id comments are selected
+            comments.ForEach(c => base.Delete(c.Id));
         }
         public void DeleteByUserId(int Id)
         {
-            List<Comment> responses = ToList().Where(c => c.OwnerId == Id).ToList();
-            foreach (Comment c in responses)
-            {
-                Delete(c.Id);
-            }
+            // select all comments related to user of Id
+            List<Comment> comments = ToList().Where(c => c.OwnerId == Id).ToList();
+            // some comments might have responses, must call recursive delete
+            comments.ForEach(c => Delete(c.Id));
         }
     }
 }

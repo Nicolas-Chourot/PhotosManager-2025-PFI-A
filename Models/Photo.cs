@@ -1,4 +1,5 @@
 ﻿using JSON_DAL;
+using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -79,11 +80,11 @@ namespace PhotosManager.Models
             get
             {
                 string UsersCommentList = "";
-                foreach (var comment in Comments)
+                foreach (var comment in Comments.DistinctBy(c=>c.OwnerId))
                 {
-                    string name = DB.Users.Get(comment.OwnerId).Name;
-                    if (!UsersCommentList.Contains(name))
-                        UsersCommentList += DB.Users.Get(comment.OwnerId).Name + "\n";
+                    User owner = comment.Owner;
+                    if (owner != null)
+                        UsersCommentList += owner.Name + "\n";
                 }
                 return UsersCommentList;
             }

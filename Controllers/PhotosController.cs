@@ -89,7 +89,7 @@ namespace PhotosManager.Controllers
         }
         public ActionResult GetDetails(bool forceRefresh = false)
         {
-            if (forceRefresh || true) //DB.Photos.HasChanged || DB.Users.HasChanged || DB.Comments.HasChanged || DB.Likes.HasChanged)
+            if (forceRefresh || DB.Photos.HasChanged || DB.Users.HasChanged || DB.Comments.HasChanged || DB.Likes.HasChanged)
             {
                 int photoId = Session["currentPhotoId"] != null ? (int)Session["currentPhotoId"] : 0;
                 DB.Photos.ResetLikesCount();
@@ -138,7 +138,7 @@ namespace PhotosManager.Controllers
         {
             User connectedUser = (User)Session["ConnectedUser"];
             DB.Likes.ToggleLike(id, connectedUser.Id);
-            return RedirectToAction("Details/" + id);
+            return null;
         }
         public ActionResult Comments(int photoId, int parentId = 0)
         {
@@ -181,6 +181,12 @@ namespace PhotosManager.Controllers
                 comment.Text = commentText;
                 DB.Comments.Update(comment);
             }
+            return null;
+        }
+        public ActionResult ToggleCommentLike(int id)
+        {
+            User connectedUser = (User)Session["ConnectedUser"];
+            DB.Likes.ToggleCommentLike(id, connectedUser.Id);
             return null;
         }
         public ActionResult DeleteComment(int id)

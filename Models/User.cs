@@ -76,10 +76,7 @@ namespace PhotosManager.Models
 
         public void DeleteLogins()
         {
-            foreach (Login login in Logins)
-            {
-                DB.Logins.Delete(login.Id);
-            }
+            Logins.ForEach(l => DB.Logins.Delete(l.Id));
         }
 
         public void DeletePhotos()

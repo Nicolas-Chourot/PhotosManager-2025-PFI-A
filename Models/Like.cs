@@ -13,19 +13,10 @@ namespace PhotosManager.Models
         public int UserId { get; set; }
         public int PhotoId { get; set; }
         public int CommentId { get; set; }
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
 
-        public Like()
-        {
-            Id = 0;
-            CommentId = 0;
-            CreationDate = DateTime.Now;
-        }
-        [JsonIgnore]
-        public User User => DB.Users.Get(UserId);
-        [JsonIgnore]
-        public Photo Photo => DB.Photos.Get(PhotoId);
-        [JsonIgnore]
-        public Comment Comment => DB.Comments.Get(CommentId);
+        [JsonIgnore] public User User => DB.Users.Get(UserId);
+        [JsonIgnore] public Photo Photo => DB.Photos.Get(PhotoId);
+        [JsonIgnore] public Comment Comment => DB.Comments.Get(CommentId);
     }
 }

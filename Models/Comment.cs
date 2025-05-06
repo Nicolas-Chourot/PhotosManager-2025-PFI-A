@@ -26,10 +26,7 @@ namespace PhotosManager.Models
             get
             {
                 string UsersLikesList = "";
-                foreach (var like in Likes)
-                {
-                    UsersLikesList += DB.Users.Get(like.UserId).Name + "\n";
-                }
+                foreach (var like in Likes) UsersLikesList += DB.Users.Get(like.UserId).Name + "\n";
                 return UsersLikesList;
             }
         }
